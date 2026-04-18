@@ -1,5 +1,139 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>JuneBlog</title><link>https://AugestWM.github.io</link><description>安？你怎么来了</description><copyright>JuneBlog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://cdn.luogu.com.cn/upload/usericon/1259913.png</url><title>avatar</title><link>https://AugestWM.github.io</link></image><lastBuildDate>Sun, 29 Mar 2026 04:57:01 +0000</lastBuildDate><managingEditor>JuneBlog</managingEditor><ttl>60</ttl><webMaster>JuneBlog</webMaster><item><title>总结/第二节课</title><link>https://AugestWM.github.io/post/zong-jie---di-er-jie-ke.html</link><description># 第一题： [三国杀](https://www.luogu.com.cn/problem/T745316?contestId=316961)
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>JuneBlog</title><link>https://AugestWM.github.io</link><description>安？你怎么来了</description><copyright>JuneBlog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://cdn.luogu.com.cn/upload/usericon/1259913.png</url><title>avatar</title><link>https://AugestWM.github.io</link></image><lastBuildDate>Sat, 18 Apr 2026 13:55:34 +0000</lastBuildDate><managingEditor>JuneBlog</managingEditor><ttl>60</ttl><webMaster>JuneBlog</webMaster><item><title>总结/第四节课</title><link>https://AugestWM.github.io/post/zong-jie---di-si-jie-ke.html</link><description># 第一题： [便宜的车票](https://www.luogu.com.cn/problem/T750168?contestId=320176)
+## 题目简述
+一共乘坐$N$次地铁，已知
+- 购买特殊票 $b$ 元 $m$ 次
+- 购买普通票 $a$ 元 $1$  次
+问：怎么坐最优惠
+## 题目分析
+可以分为两种情况：
+1. 买普通票便宜 全买普通票 `a * n`
+2. 买特殊票便宜 分为两种情况
+    1. 全买特殊票便宜 `b * ceil(n * 1.0 / m)`
+    2. 买完特殊票买普通票便宜 `n / m * b + (n - n / m * m)`
+最后照写即可
+::::success[正确代码]{close}
+```cpp
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int main()
+{
+	int n, m, a, b;
+	cin &gt;&gt; n &gt;&gt; m &gt;&gt; a &gt;&gt; b;
+	if(m * a &lt; b) //如果普通票相对优惠
+	{
+		cout &lt;&lt; a * n; //全买普通票
+		return 0;
+	}
+	else //否则
+	{
+		int s1 = ceil(n * 1.0 / m) * b; //1. 全买特殊票
+		int s2 = n / m * b + (n - n / m * m); //2. 买完特殊买普通票
+		cout &lt;&lt; min(s1, s2); //取最小值
+	}
+	return 0;
+}
+```
+
+::::
+
+# 第二题： [好数](https://www.luogu.com.cn/problem/T708694?contestId=318983)
+## 题目简述
+一个数字包含所有0～k的数 则称他为“好数” 问：给定的$N$个数中有多少个好数
+## 题目分析
+用数位分离 + 桶即可，桶标记有多少是否是好数，数位分离给桶数据
+桶要`memset`!
+大概就是这样：
+::::success[正确代码]{close}
+```cpp
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+const int N = 10;
+
+bool a[N];
+
+int main() {
+	int n, k;
+	cin &gt;&gt; n &gt;&gt; k;
+	int sum = 0;
+
+	for (int i = 1; i &lt;= n; i ++) {
+		memset(a, 0, sizeof a);//初始化
+		int x;
+		cin &gt;&gt; x;
+		while(x)
+		{
+			a[x % 10] = 1;
+			x /= 10;
+		}//数位分离让桶标记
+		int flag = 0;
+		for (int i = 0; i &lt;= k; i ++) {
+			if (a[i] == 0) {
+				flag = 1;
+				break;
+			}
+		}
+		if (flag == 0) sum ++;//计数
+	}
+	cout &lt;&lt; sum &lt;&lt; endl;
+	return 0;
+}
+
+```
+::::
+
+# 第三题： [石头坠落](https://www.luogu.com.cn/problem/T750172?contestId=320176)
+## 题目简述
+告诉你一个图，已知石头是`*`，障碍物是`o`，其余都是空，问在石头都坠落之后的图是长什么样的
+
+## 题目分析
+已知高最多50,说明可以对于每一个石头做50次处理
+也就是当某一个石头下面是空单元格的时候，说明他可以交换他们两个的位置，然后循环50次（因为高最大50），最后输出最后的图
+记得`memset`!
+::::success[正确代码]{close}
+```cpp
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+char a[60][60];
+
+int main() {
+	int t;
+	cin &gt;&gt; t;
+	while (t --) {
+		memset(a, 0, sizeof a);
+		int n, m;
+		cin &gt;&gt; n &gt;&gt; m;
+		for (int i = 1; i &lt;= n; i ++) {
+			for (int j = 1; j &lt;= m; j ++) {
+				cin &gt;&gt; a[j][i];
+			}
+		}
+		for (int x = 1; x &lt;= 60; x ++) {//循环50次，保险60次
+			for (int i = 1; i &lt;= n; i ++) {
+				for (int j = 1; j &lt;= m; j ++) {
+					if (a[j][i] == '*' and a[j][i + 1] == '.') {
+						a[j][i] = '.';
+						a[j][i + 1] = '*';
+						//某一个石头下面是空格，那么就交换他们的位置
+					}
+				}
+			}
+			
+		}
+		for (int i = 1; i &lt;= n; i ++) {
+			for (int j = 1; j &lt;= m; j ++) {
+				cout &lt;&lt; a[j][i];
+			}
+			cout &lt;&lt; endl;
+		}
+	}
+	return 0;
+}
+
+```
+::::。</description><guid isPermaLink="true">https://AugestWM.github.io/post/zong-jie---di-si-jie-ke.html</guid><pubDate>Sat, 18 Apr 2026 13:55:09 +0000</pubDate></item><item><title>总结/第二节课</title><link>https://AugestWM.github.io/post/zong-jie---di-er-jie-ke.html</link><description># 第一题： [三国杀](https://www.luogu.com.cn/problem/T745316?contestId=316961)
 ## 题目简述
 现在有两个人打牌，每个人有3种技能
 - 杀：对对方使用，对方需要使用一张 **闪** ，否则对方输掉游戏； **或** 回应对方的 **斩** ；
